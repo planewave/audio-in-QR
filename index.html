@@ -10,11 +10,20 @@
 <body>
     <div class="container">
         <h1>QR Audio Clip</h1>
-        <p>Record a short audio clip, and this app will encode it into a QR code.</p>
-        
-        <button id="recordBtn">🎤 Record 1.6s Audio</button>
+        <div class="description">
+            <p class="intro">Transform your voice into a QR code! Record a brief 1.2-second audio clip and watch it become a scannable QR code instantly.</p>
+            
+            <div class="features">
+                <p>✨ <strong>Private & Secure:</strong> All processing happens locally - no server uploads</p>
+                <p>📱 <strong>iOS Ready:</strong> <a href="https://www.icloud.com/shortcuts/d9a68dcfe49a485dbd736846b6b84f10">Get the iOS Shortcut</a> to play your audio</p>
+                <p>🔒 <strong>Offline Capable:</strong> Your audio lives in the QR code - scan and play anytime</p>
+            </div>
+        </div>
 
-        <img id="qrImg" alt="QR Code will appear here">
+        <button id="recordBtn" class="record-button">🎤 Record Audio</button>
+
+        <img id="qrImg" alt="QR Code will appear here" src="audioQR_sample.png">
+        <p class="copyright">© 2025 Developed by <a href="https://github.com/planewave/audio-in-QR">Xiao Liu</a></p>
     </div>
 
     <script src="js/app.js" type="module"></script>

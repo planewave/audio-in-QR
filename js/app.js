@@ -22,7 +22,7 @@ recordBtn.onclick = async () => {
 
   try {
     // 1. Record Audio for a fixed duration
-    recordBtn.textContent = 'Recording (1.6s)...';
+    recordBtn.textContent = 'Recording...';
     const duration = 1.6;
     const wavBlob = await recordWAV(duration);
 
@@ -66,7 +66,7 @@ recordBtn.onclick = async () => {
     console.error(error);
     alert(`An error occurred: ${error.message}. Check the console for details.`);
   } finally {
-    recordBtn.textContent = '🎤 Record 1.6s Audio';
+    recordBtn.textContent = '🎤 Record Audio';
     recordBtn.disabled = false;
   }
 };
