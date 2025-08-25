@@ -4,8 +4,6 @@ import { renderQR } from './qrcode-renderer.js';
 
 const recordBtn = document.querySelector('#recordBtn');
 const qrImg = document.querySelector('#qrImg');
-const durationSlider = document.querySelector('#durationSlider');
-const durationLabel = document.querySelector('#durationLabel');
 
 // Destructure the createFFmpeg from the global FFmpeg object provided by the script tag
 const { createFFmpeg, fetchFile } = FFmpeg;
@@ -18,19 +16,14 @@ function arrayBufferToBase64(ab) {
   return btoa(s);
 }
 
-durationSlider.oninput = () => {
-    durationLabel.textContent = `${durationSlider.value} s`;
-    recordBtn.textContent = `🎤 Record ${durationSlider.value} s`;
-};
-
 recordBtn.onclick = async () => {
   recordBtn.disabled = true;
   qrImg.src = '';
 
   try {
-    // 1. Record Audio
-    recordBtn.textContent = 'Recording...';
-    const duration = parseFloat(durationSlider.value);
+    // 1. Record Audio for a fixed duration
+    recordBtn.textContent = 'Recording (1.6s)...';
+    const duration = 1.6;
     const wavBlob = await recordWAV(duration);
 
     // 2. Load FFmpeg if not loaded
@@ -39,13 +32,14 @@ recordBtn.onclick = async () => {
         await ffmpeg.load();
     }
 
-    // 3. Run conversion
-    recordBtn.textContent = 'Compressing...';
+    // 3. Run conversion with silence removal and trim filters
+    recordBtn.textContent = 'Analyzing & Compressing...';
     const wavName = 'in.wav';
     const outName = 'out.mp4';
     ffmpeg.FS('writeFile', wavName, await fetchFile(wavBlob));
     await ffmpeg.run(
         '-i', wavName,
+        '-af', 'silenceremove=start_periods=1:start_threshold=-50dB,atrim=duration=1.15',
         '-c:a', 'libopus',
         '-b:a', '8k',
         '-ac', '1',
@@ -57,8 +51,7 @@ recordBtn.onclick = async () => {
     const ab = await opusMP4Blob.arrayBuffer();
 
     if (ab.byteLength > 2215) {
-        alert('Error: Audio data is too long to fit in a QR code. Try reducing the duration.');
-        recordBtn.textContent = `🎤 Record ${durationSlider.value} s`;
+        alert(`Error: Final audio is still too long (${ab.byteLength} bytes). Try speaking closer to the mic.`);
         recordBtn.disabled = false;
         return;
     }
@@ -73,7 +66,7 @@ recordBtn.onclick = async () => {
     console.error(error);
     alert(`An error occurred: ${error.message}. Check the console for details.`);
   } finally {
-    recordBtn.textContent = `🎤 Record ${durationSlider.value} s`;
+    recordBtn.textContent = '🎤 Record 1.6s Audio';
     recordBtn.disabled = false;
   }
 };
