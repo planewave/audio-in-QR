@@ -22,6 +22,9 @@ Currently, a QR code can store approximately 1.2 seconds of clear audio using th
 
 ![QR Code](resource/audioQR_sample.png)
 
+You can create your own QR audio clip [here](https://planewave.github.io/audio-in-QR/).
+你也可以在[这里](https://planewave.github.io/audio-in-QR/)将你的录音存入 QR 码中.
+
 ## How to Use / 使用方法
 
 1. Prepare an audio clip (~1 second), a sample audio can be found in the resource folder 
