@@ -5,6 +5,10 @@ import { renderQR } from './qrcode-renderer.js';
 const recordBtn = document.querySelector('#recordBtn');
 const qrImg = document.querySelector('#qrImg');
 
+// Debug cross-origin isolation status
+console.log('Cross-origin isolated:', window.crossOriginIsolated);
+console.log('SharedArrayBuffer available:', typeof SharedArrayBuffer !== 'undefined');
+
 // Destructure the createFFmpeg from the global FFmpeg object provided by the script tag
 const { createFFmpeg, fetchFile } = FFmpeg;
 const ffmpeg = createFFmpeg({ log: true });
