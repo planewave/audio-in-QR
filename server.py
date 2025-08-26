@@ -1,4 +1,4 @@
-# server.py
+# server.py for local testing
 import http.server
 import socketserver
 

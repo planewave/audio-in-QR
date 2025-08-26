@@ -20,11 +20,11 @@ Currently, a QR code can store approximately 1.2 seconds of clear audio using th
 - Android support via Tasker  (not provided)
     支持通过 Tasker 在 Android 上使用 （未提供）
 
-![QR Code](audioQR_sample.png)
+![QR Code](resource/audioQR_sample.png)
 
 ## How to Use / 使用方法
 
-1. Prepare an audio clip (~1 second)  
+1. Prepare an audio clip (~1 second), a sample audio can be found in the resource folder 
      准备一段音频（约 1 秒）
 
 2. Compress using FFmpeg with Opus codec:  
@@ -39,7 +39,7 @@ ffmpeg -i input.wav -c:a libopus -b:a 8k -ac 1 -ar 8000 output.mp4
 4. Scan and play using iOS Shortcut or Android Tasker  
      使用 iOS 快捷指令或 Android Tasker 扫描并播放
 
-![](shortcut.jpeg)
+![](resource/shortcut.jpeg)
 
 ## Technical Details / 技术细节
 
