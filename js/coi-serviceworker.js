@@ -1,5 +1,5 @@
-/*! coi-serviceworker v0.1.6 - Guido Zuidhof, licensed under MIT */
-// From: https://github.com/gzuidhof/coi-serviceworker
+/*! coi-serviceworker v0.1.7 - Modified for better Safari compatibility */
+// Based on: https://github.com/gzuidhof/coi-serviceworker
 // This service worker enables cross-origin isolation by adding the required headers
 
 if(typeof window === 'undefined') {
@@ -30,46 +30,35 @@ if(typeof window === 'undefined') {
                         headers: newHeaders
                     });
                 })
-                .catch(e => console.error(e))
+                .catch(e => console.error("Fetch failed:", e))
         );
     });
 
 } else {
     // We are in the main thread
 
-    (() => {
-        const reloadedBySelf = window.sessionStorage.getItem("coi-reloaded");
-        if (reloadedBySelf) {
-            window.sessionStorage.removeItem("coi-reloaded");
-            return;
-        }
-
-        const needsCoiHeaders = (() => {
-            return !window.crossOriginIsolated;
-        })();
-
-        const coiServiceWorker = (() => {
-            if (typeof window === 'undefined') {
-                return {};
-            }
-            
-            if (window.navigator && window.navigator.serviceWorker && window.navigator.serviceWorker.register) {
-                window.navigator.serviceWorker.register(window.document.currentScript.src).then(
-                    registration => {
+    // Check if we're already cross-origin isolated
+    if (window.crossOriginIsolated) {
+        // Already isolated
+    } else {
+        // Try to register the service worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./js/coi-serviceworker.js')
+                    .then(function(registration) {
                         console.log('[COI ServiceWorker] Registration successful with scope: ', registration.scope);
                         
-                        if (needsCoiHeaders) {
-                            if (registration.active && !window.navigator.serviceWorker.controller) {
-                                window.sessionStorage.setItem("coi-reloaded", "1");
-                                window.location.reload();
-                            }
+                        // If the service worker is installed but we're not isolated, reload
+                        if (!window.crossOriginIsolated && registration.active) {
+                            console.log('[COI] Reloading to activate cross-origin isolation...');
+                            window.sessionStorage.setItem("coi-reload", "1");
+                            window.location.reload();
                         }
-                    },
-                    err => {
+                    })
+                    .catch(function(err) {
                         console.log('[COI ServiceWorker] Registration failed: ', err);
-                    }
-                );
-            }
-        })();
-    })();
+                    });
+            });
+        }
+    }
 }

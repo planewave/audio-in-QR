@@ -4,6 +4,9 @@
     --text-color: #f0f0f0;
     --primary-color: #007bff;
     --card-bg-color: #2a2a2a;
+    --warning-bg: #fff3cd;
+    --warning-border: #ffeaa7;
+    --warning-text: #856404;
 }
 
 body {
@@ -61,6 +64,25 @@ h1 {
     margin: 0;
     padding: 0.5rem 0;
     color: #34495e;
+}
+
+.warning {
+    background-color: var(--warning-bg);
+    border: 1px solid var(--warning-border);
+    border-radius: 8px;
+    color: var(--warning-text);
+    padding: 1rem;
+    margin: 1rem 0;
+    text-align: left;
+}
+
+.warning ul {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+}
+
+.warning li {
+    margin: 0.25rem 0;
 }
 
 #recordBtn {
