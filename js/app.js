@@ -27,7 +27,7 @@ recordBtn.onclick = async () => {
   try {
     // 1. Record Audio for a fixed duration
     recordBtn.textContent = 'Recording...';
-    const duration = 1.6;
+    const duration = 2.5;
     const wavBlob = await recordWAV(duration);
 
     // 2. Load FFmpeg if not loaded
@@ -42,17 +42,22 @@ recordBtn.onclick = async () => {
     const outName = 'out.mp4';
     ffmpeg.FS('writeFile', wavName, await fetchFile(wavBlob));
     await ffmpeg.run(
-        '-i', wavName,
-        '-af', 'silenceremove=start_periods=1:start_threshold=-50dB,atrim=duration=1.15',
-        '-c:a', 'libopus',
-        '-b:a', '8k',
-        '-ac', '1',
-        '-ar', '8000',
-        outName
+      '-i', wavName,
+      '-af', 'silenceremove=start_periods=1:start_threshold=-50dB,atrim=duration=1.45',
+      '-c:a', 'libopus',
+      '-b:a', '8k',
+      '-ac', '1',
+      '-ar', '8000',
+      '-application', 'voip',
+      '-packet_loss', '20',
+      '-compression_level', '10',
+      '-frame_duration', '60',
+      outName
     );
     const data = ffmpeg.FS('readFile', outName);
     const opusMP4Blob = new Blob([data.buffer], { type: 'audio/mp4' });
     const ab = await opusMP4Blob.arrayBuffer();
+    console.log(`Audio size: ${ab.byteLength} bytes`);
 
     if (ab.byteLength > 2215) {
         alert(`Error: Final audio is still too long (${ab.byteLength} bytes). Try speaking closer to the mic.`);
