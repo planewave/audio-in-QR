@@ -139,6 +139,30 @@ h1 {
     text-decoration: underline;
 }
 
+.warning {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    color: #856404;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.warning p {
+    margin: 0.5rem 0;
+}
+
+.warning ul {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+}
+
+.warning li {
+    margin: 0.25rem 0;
+}
+
 @media (prefers-color-scheme: light) {
     :root {
         --bg-color: #f0f0f0;
