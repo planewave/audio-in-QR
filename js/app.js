@@ -43,7 +43,7 @@ recordBtn.onclick = async () => {
     ffmpeg.FS('writeFile', wavName, await fetchFile(wavBlob));
     await ffmpeg.run(
       '-i', wavName,
-      '-af', 'silenceremove=start_periods=1:start_threshold=-50dB,atrim=duration=1.45',
+      '-af', 'silenceremove=start_periods=1:start_threshold=-50dB,atrim=duration=1.4',
       '-c:a', 'libopus',
       '-b:a', '8k',
       '-ac', '1',
