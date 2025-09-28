@@ -1,7 +1,15 @@
-# QR audio clip
+# Audio in QR
 
-A prototype implementation that embeds and plays short audio clips through QR codes.  
-一个将短音频嵌入 QR 码并播放的原型实现。
+A web application that converts short audio clips into QR codes that can be scanned and played back.
+
+## Cross-Origin Isolation Requirements
+
+This application uses SharedArrayBuffer through ffmpeg.wasm, which requires cross-origin isolation. The following headers must be set:
+
+- `Cross-Origin-Embedder-Policy: require-corp`
+- `Cross-Origin-Opener-Policy: same-origin`
+
+These headers are configured in `vercel.json` for deployment to Vercel and in `server.py` for local development.
 
 ## Overview / 概述
 

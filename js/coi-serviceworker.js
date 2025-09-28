@@ -20,15 +20,22 @@ if(typeof window === 'undefined') {
                         return response;
                     }
 
-                    const newHeaders = new Headers(response.headers);
-                    newHeaders.set("Cross-Origin-Embedder-Policy", "require-corp");
-                    newHeaders.set("Cross-Origin-Opener-Policy", "same-origin");
+                    // Only add headers to HTML and JS responses to avoid issues with other content types
+                    if (event.request.destination === 'document' || 
+                        event.request.destination === 'script' || 
+                        event.request.destination === 'worker') {
+                        const newHeaders = new Headers(response.headers);
+                        newHeaders.set("Cross-Origin-Embedder-Policy", "require-corp");
+                        newHeaders.set("Cross-Origin-Opener-Policy", "same-origin");
 
-                    return new Response(response.body, {
-                        status: response.status,
-                        statusText: response.statusText,
-                        headers: newHeaders
-                    });
+                        return new Response(response.body, {
+                            status: response.status,
+                            statusText: response.statusText,
+                            headers: newHeaders
+                        });
+                    }
+                    
+                    return response;
                 })
                 .catch(e => console.error(e))
         );
@@ -37,32 +44,30 @@ if(typeof window === 'undefined') {
 } else {
     // We are in the main thread
 
-    (() => {
+    (function() {
+        // Check if cross-origin isolation is already enabled (Vercel server headers)
+        if (window.crossOriginIsolated) {
+            console.log('[COI ServiceWorker] Cross-origin isolation is already enabled via server headers');
+            return;
+        }
+        
         const reloadedBySelf = window.sessionStorage.getItem("coi-reloaded");
         if (reloadedBySelf) {
             window.sessionStorage.removeItem("coi-reloaded");
             return;
         }
 
-        const needsCoiHeaders = (() => {
-            return !window.crossOriginIsolated;
-        })();
+        const needsCoiHeaders = !window.crossOriginIsolated;
 
-        const coiServiceWorker = (() => {
-            if (typeof window === 'undefined') {
-                return {};
-            }
-            
+        if (needsCoiHeaders && window.isSecureContext) {
             if (window.navigator && window.navigator.serviceWorker && window.navigator.serviceWorker.register) {
                 window.navigator.serviceWorker.register(window.document.currentScript.src).then(
                     registration => {
                         console.log('[COI ServiceWorker] Registration successful with scope: ', registration.scope);
                         
-                        if (needsCoiHeaders) {
-                            if (registration.active && !window.navigator.serviceWorker.controller) {
-                                window.sessionStorage.setItem("coi-reloaded", "1");
-                                window.location.reload();
-                            }
+                        if (registration.active && !window.navigator.serviceWorker.controller) {
+                            window.sessionStorage.setItem("coi-reloaded", "1");
+                            window.location.reload();
                         }
                     },
                     err => {
@@ -70,6 +75,6 @@ if(typeof window === 'undefined') {
                     }
                 );
             }
-        })();
+        }
     })();
 }
